@@ -20,9 +20,30 @@
 
     <groupId>net.acesinc.druid.extensions</groupId>
     <artifactId>cors-servlet-filter</artifactId>
-    <name>cors-servlet-filter</name>
-    <description>cors-servlet-filter</description>
-    <version>0.0.3-SNAPSHOT</version>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>This is an extension for the druid analytics data store that enables CORS headers across all of the exposed APIs. This allows web applications to make AJAX calls to the druid APIs without Cross Site Request issues.</description>
+    <url>https://github.com/acesinc/druid-cors-filter-extension</url>
+    <version>1.0.0</version>
+    
+    <scm>
+        <connection>scm:git:git://github.com/acesinc/druid-cors-filter-extension.git</connection>
+        <developerConnection>scm:git:git@github.com:acesinc/druid-cors-filter-extension.git</developerConnection>
+        <url>https://github.com/acesinc/druid-cors-filter-extension</url>
+    </scm>
+  
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
+    
+    <developers>
+        <developer>
+            <name>Andrew Serff</name>
+            <url>https://github.com/andrewserff</url>
+        </developer>
+    </developers>
     
     <parent>
         <groupId>io.druid</groupId>
@@ -56,18 +77,62 @@
             <version>3.4</version>
         </dependency>
     </dependencies>
-    
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <configuration>
+                        <arguments>-Dgpg.passphrase=${gpg.passphrase}</arguments>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
     <distributionManagement>
-        <repository>
-            <id>deployment</id>
-            <name>Internal Releases</name>
-            <url>http://ec2-107-21-105-62.compute-1.amazonaws.com:8081/nexus/content/repositories/releases/</url>
-        </repository>
         <snapshotRepository>
-            <id>deployment</id>
-            <name>Internal Releases</name>
-            <url>http://ec2-107-21-105-62.compute-1.amazonaws.com:8081/nexus/content/repositories/snapshots/</url>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus snapshot repository</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <name>Sonatype Nexus release repository</name>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
 
+    <profiles>
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.4</version>
+                        <configuration>
+                            <passphrase>${gpg.passphrase}</passphrase>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
